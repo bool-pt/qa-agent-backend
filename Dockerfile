@@ -10,7 +10,6 @@
 
 ARG NODE_VERSION=22-bookworm-slim
 ARG OPENCLAW_VERSION=2026.4.15
-ARG PLAYWRIGHT_MCP_VERSION=0.0.70
 ARG OUTSYSTEMSCC_VERSION=2.0.7
 
 # ---- builder stage: compile TypeScript ---------------------------------------
@@ -28,12 +27,10 @@ RUN npm run build && \
 # ---- runtime stage -----------------------------------------------------------
 FROM node:${NODE_VERSION} AS runtime
 ARG OPENCLAW_VERSION
-ARG PLAYWRIGHT_MCP_VERSION
 ARG OUTSYSTEMSCC_VERSION
 ARG TARGETARCH
 
-ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright \
-    NODE_ENV=production \
+ENV NODE_ENV=production \
     WORKSPACE_ROOT=/data/workspace-qa \
     GATEWAY_URL=http://127.0.0.1:18789/v1/chat/completions \
     PORT=3100
@@ -51,17 +48,18 @@ RUN apt-get update && \
         tini \
     && rm -rf /var/lib/apt/lists/*
 
-# OpenClaw + Playwright MCP, pinned. The single npm install -g layer keeps the
-# image cache stable as long as the versions don't change.
-RUN npm install -g \
-        openclaw@${OPENCLAW_VERSION} \
-        @playwright/mcp@${PLAYWRIGHT_MCP_VERSION} \
-    && npm cache clean --force
+# OpenClaw, pinned.
+RUN npm install -g openclaw@${OPENCLAW_VERSION} && \
+    npm cache clean --force
 
-# Chromium binary + its apt runtime libs. --with-deps runs apt-get for the
-# Debian/Ubuntu package list that Playwright's Chromium needs.
-RUN npx --yes playwright install --with-deps chromium && \
-    rm -rf /var/lib/apt/lists/*
+# Chromium from Debian. Lands at /usr/bin/chromium, which is one of the paths
+# OpenClaw's browser tool scans, so no symlinks are needed. fonts-liberation
+# covers the common web fonts; without it pages render with boxy fallbacks.
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        chromium \
+        fonts-liberation \
+    && rm -rf /var/lib/apt/lists/*
 
 # OutSystems Cloud Connector. github releases publish per-arch tarballs whose
 # names line up with Docker's TARGETARCH (amd64 / arm64).

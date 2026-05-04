@@ -180,10 +180,14 @@ cp .env.example .env
 #      ODC_SERVER_URL, ODC_TOKEN, ODC_REMOTE_PORT
 #    BEARER_TOKEN is your choice; generate one with: openssl rand -hex 32
 
-# 3. Start the stack. This pulls the pre-built image from GHCR.
+# 3. Allow the container to draw on your X display, so attendees can watch
+#    the agent drive Chromium live. Linux/VM only — once per session.
+xhost +local:
+
+# 4. Start the stack. This pulls the pre-built image from GHCR.
 docker compose up -d
 
-# 4. Watch the three processes come up:
+# 5. Watch the three processes come up:
 docker compose logs -f
 #    [entrypoint] starting openclaw-gateway
 #    [entrypoint] starting REST server

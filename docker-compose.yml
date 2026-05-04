@@ -18,10 +18,18 @@ services:
     container_name: qa-agent-backend
     env_file:
       - .env
+    # Pass the host's X display through so the agent's Chromium renders on the
+    # attendee's screen (lab demo: they watch the agent click around in real
+    # time). Requires a Linux host/VM with an X server. Mac/Windows users would
+    # need XQuartz / VcXsrv. Run `xhost +local:` once on the host so the
+    # container (uid 0) is allowed to connect to the X socket.
+    environment:
+      - DISPLAY=${DISPLAY:-:0}
     ports:
       - "${PORT:-3100}:3100"
     volumes:
       - ./artifacts:/data/workspace-qa
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
     restart: unless-stopped
     # Chromium plus the gateway is hungry; bump from Docker Desktop's 2 GB
     # default if you see OOM-killed processes during long test runs.

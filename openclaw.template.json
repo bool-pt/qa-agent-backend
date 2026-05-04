@@ -39,7 +39,7 @@
           ]
         },
         "sandbox": {
-          "mode": "non-main",
+          "mode": "off",
           "scope": "agent"
         },
         "tools": {
@@ -117,9 +117,9 @@
     }
   },
   "browser": {
+    "noSandbox": true,
     "extraArgs": [
       "--window-size=1440,900",
-      "--no-sandbox",
       "--disable-dev-shm-usage"
     ]
   },
