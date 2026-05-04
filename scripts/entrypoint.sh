@@ -27,13 +27,27 @@ mkdir -p "$OPENCLAW_HOME" "$WORKSPACE_ROOT"
 # Mint a per-container gateway token on first start; reuse on restarts inside
 # the same container layer so the REST server's token discovery stays consistent.
 if [[ ! -f "$OPENCLAW_HOME/gateway.token" ]]; then
-	token="$(openssl rand -hex 24)"
-	printf '%s' "$token" > "$OPENCLAW_HOME/gateway.token"
+	openssl rand -hex 24 > "$OPENCLAW_HOME/gateway.token"
 	chmod 600 "$OPENCLAW_HOME/gateway.token"
-	# Substitute into the config template. token is hex so no sed-special chars.
-	sed "s/__GATEWAY_TOKEN__/$token/" /opt/openclaw.template.json > "$OPENCLAW_HOME/openclaw.json"
 	echo "entrypoint: minted new gateway token"
 fi
+token="$(cat "$OPENCLAW_HOME/gateway.token")"
+
+# Render the openclaw config from the template every start so .env toggles
+# (e.g. LIVE_BROWSER) take effect on `docker compose up -d` without a rebuild.
+# token is hex so it has no sed-special chars.
+case "${LIVE_BROWSER:-true}" in
+	true|TRUE|True|1|yes|YES) browser_headless="false" ;;
+	false|FALSE|False|0|no|NO) browser_headless="true" ;;
+	*)
+		echo "entrypoint: LIVE_BROWSER must be true or false (got: ${LIVE_BROWSER})" >&2
+		exit 1
+		;;
+esac
+sed -e "s/__GATEWAY_TOKEN__/$token/" \
+    -e "s/__BROWSER_HEADLESS__/$browser_headless/" \
+    /opt/openclaw.template.json > "$OPENCLAW_HOME/openclaw.json"
+echo "entrypoint: rendered openclaw config (browser.headless=$browser_headless)"
 
 # Seed the writable workspace volume from the read-only template when empty.
 # Bind-mounted host folders start empty and need the SOUL.md / skills / .claude

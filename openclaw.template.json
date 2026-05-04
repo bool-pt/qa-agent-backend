@@ -117,6 +117,7 @@
     }
   },
   "browser": {
+    "headless": __BROWSER_HEADLESS__,
     "noSandbox": true,
     "extraArgs": [
       "--window-size=1440,900",
