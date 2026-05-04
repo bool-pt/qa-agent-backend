@@ -62,6 +62,7 @@ export async function postCallback(
     console.log(
       `[webhook] delivered run_id=${payload.run_id} status=${payload.status} → HTTP ${res.status}`,
     );
+    console.log(`[webhook] full payload (sent to ODC):\n${body}`);
     return;
   }
 

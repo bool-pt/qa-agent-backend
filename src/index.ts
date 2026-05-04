@@ -275,6 +275,15 @@ async function main(): Promise<void> {
     console.log(
       `[submit] accepted run_id=${meta.run_id} jira_key=${meta.jira_key} → callback=${CALLBACK_URL}`,
     );
+    const redacted = {
+      ...validation.value,
+      auth: validation.value.auth.required
+        ? { ...validation.value.auth, password: "[REDACTED]" }
+        : validation.value.auth,
+    };
+    console.log(
+      `[submit] full payload (received from ODC):\n${JSON.stringify(redacted)}`,
+    );
     dispatchAgent(validation.value, meta);
   });
 
