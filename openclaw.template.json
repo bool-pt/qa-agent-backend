@@ -120,7 +120,9 @@
     "noSandbox": true,
     "extraArgs": [
       "--window-size=1440,900",
-      "--disable-dev-shm-usage"
+      "--disable-dev-shm-usage",
+      "--no-zygote",
+      "--in-process-gpu"
     ]
   },
   "plugins": {
