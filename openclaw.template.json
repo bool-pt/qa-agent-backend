@@ -1,0 +1,146 @@
+{
+  "agents": {
+    "defaults": {
+      "workspace": "/data/workspace",
+      "maxConcurrent": 1,
+      "models": {
+        "anthropic/claude-opus-4-7": {
+          "params": {
+            "context1m": true
+          }
+        },
+        "anthropic/claude-sonnet-4-6": {
+          "params": {
+            "context1m": true
+          }
+        },
+        "anthropic/claude-opus-4-6": {
+          "params": {
+            "context1m": true
+          }
+        },
+        "anthropic/claude-opus-4-5": {},
+        "anthropic/claude-sonnet-4-5": {},
+        "anthropic/claude-haiku-4-5": {}
+      },
+      "model": {
+        "primary": "anthropic/claude-sonnet-4-6"
+      }
+    },
+    "list": [
+      {
+        "id": "qa-executor",
+        "default": true,
+        "workspace": "/data/workspace-qa",
+        "model": {
+          "primary": "anthropic/claude-sonnet-4-6",
+          "fallbacks": [
+            "anthropic/claude-opus-4-7"
+          ]
+        },
+        "sandbox": {
+          "mode": "non-main",
+          "scope": "agent"
+        },
+        "tools": {
+          "alsoAllow": [
+            "browser"
+          ],
+          "deny": [
+            "edit",
+            "apply_patch",
+            "exec",
+            "process",
+            "read",
+            "gateway",
+            "cron"
+          ]
+        }
+      }
+    ]
+  },
+  "gateway": {
+    "mode": "local",
+    "auth": {
+      "mode": "token",
+      "token": "__GATEWAY_TOKEN__"
+    },
+    "port": 18789,
+    "bind": "loopback",
+    "tailscale": {
+      "mode": "off",
+      "resetOnExit": false
+    },
+    "trustedProxies": [
+      "127.0.0.1"
+    ],
+    "controlUi": {
+      "allowInsecureAuth": true
+    },
+    "nodes": {
+      "denyCommands": [
+        "camera.snap",
+        "camera.clip",
+        "screen.record",
+        "contacts.add",
+        "calendar.add",
+        "reminders.add",
+        "sms.send",
+        "sms.search"
+      ]
+    },
+    "http": {
+      "endpoints": {
+        "chatCompletions": {
+          "enabled": true
+        }
+      }
+    }
+  },
+  "session": {
+    "dmScope": "per-channel-peer",
+    "reset": {
+      "mode": "daily",
+      "atHour": 4,
+      "idleMinutes": 30
+    }
+  },
+  "tools": {
+    "profile": "coding"
+  },
+  "auth": {
+    "profiles": {
+      "anthropic:api-key": {
+        "provider": "anthropic",
+        "mode": "api_key"
+      }
+    }
+  },
+  "browser": {
+    "extraArgs": [
+      "--window-size=1440,900",
+      "--no-sandbox",
+      "--disable-dev-shm-usage"
+    ]
+  },
+  "plugins": {
+    "entries": {
+      "anthropic": {
+        "enabled": true
+      },
+      "browser": {
+        "enabled": true
+      },
+      "acpx": {
+        "enabled": true
+      }
+    }
+  },
+  "skills": {
+    "entries": {
+      "playwright-mcp": {
+        "enabled": false
+      }
+    }
+  }
+}

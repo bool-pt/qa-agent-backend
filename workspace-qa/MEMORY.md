@@ -1,0 +1,1 @@
+- [QA output contract violations](memory/feedback_output_contract.md) — no result.json on disk; reply must be bare JSON with zero prose before or after

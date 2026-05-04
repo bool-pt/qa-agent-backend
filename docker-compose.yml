@@ -1,0 +1,31 @@
+# Single-service compose file for the OutSystems ONE 2026 lab backend.
+# Quickstart for attendees:
+#   1. cp .env.example .env  &&  edit .env (5 required vars)
+#   2. docker compose up -d
+#   3. docker compose logs -f
+#
+# `image:` is the published GHCR tag (default for `docker compose pull`).
+# `build: .` is a local-build fallback if the image isn't available or if
+# you've cloned the repo and want to iterate. Override the image owner with
+# IMAGE_OWNER in .env if you fork the repo (e.g. IMAGE_OWNER=acme-corp).
+
+services:
+  mcp-qa:
+    image: ghcr.io/${IMAGE_OWNER:-outsystems-one-2026-lab}/mcp-qa:${IMAGE_TAG:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mcp-qa
+    env_file:
+      - .env
+    ports:
+      - "${PORT:-3100}:3100"
+    volumes:
+      - ./artifacts:/data/workspace-qa
+    restart: unless-stopped
+    # Chromium plus the gateway is hungry; bump from Docker Desktop's 2 GB
+    # default if you see OOM-killed processes during long test runs.
+    deploy:
+      resources:
+        limits:
+          memory: 4G

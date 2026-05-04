@@ -1,0 +1,28 @@
+# Build artifacts (rebuilt inside the image)
+node_modules
+dist
+
+# Runtime data (not part of the image)
+artifacts
+.playwright-mcp
+workspace-qa/AQA-*
+workspace-qa/state
+workspace-qa/memory/*.sqlite
+workspace-qa/SOUL.md.bak
+
+# Secrets
+.env
+*.pem
+*.key
+
+# Editor / OS junk
+.git
+.gitignore
+.claude
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+
+# Documentation that doesn't need to ship into the image
+SMOKE_TEST.txt

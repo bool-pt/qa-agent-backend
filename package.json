@@ -1,0 +1,26 @@
+{
+  "name": "openclaw-qa-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "REST server that exposes the OpenClaw qa-executor agent as POST /test_user_story for OutSystems ODC. Accepts the job, returns 202 with a run_id, and POSTs the ObservationResult to a configured callback URL when the agent finishes.",
+  "scripts": {
+    "build": "tsc -p .",
+    "start": "node dist/index.js",
+    "dev": "tsx watch src/index.ts",
+    "smoke": "node dist/smoke.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.12",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

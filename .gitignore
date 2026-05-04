@@ -1,0 +1,19 @@
+node_modules
+dist
+.env
+*.log
+
+# Runtime data (host-side bind mount target + agent state)
+artifacts
+.playwright-mcp
+workspace-qa/AQA-*
+workspace-qa/state/*
+workspace-qa/memory/*.sqlite
+workspace-qa/SOUL.md.bak
+
+# Editor / OS
+.claude
+.vscode
+.idea
+.DS_Store
+Thumbs.db
