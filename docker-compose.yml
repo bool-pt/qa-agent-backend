@@ -10,12 +10,12 @@
 # IMAGE_OWNER in .env if you fork the repo (e.g. IMAGE_OWNER=acme-corp).
 
 services:
-  mcp-qa:
-    image: ghcr.io/${IMAGE_OWNER:-outsystems-one-2026-lab}/mcp-qa:${IMAGE_TAG:-latest}
+  qa-agent-backend:
+    image: ghcr.io/${IMAGE_OWNER:-outsystems-one-2026-lab}/qa-agent-backend:${IMAGE_TAG:-latest}
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: mcp-qa
+    container_name: qa-agent-backend
     env_file:
       - .env
     ports:

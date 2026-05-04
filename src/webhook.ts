@@ -19,7 +19,7 @@ export interface PostCallbackOptions {
   timeoutMs: number;
 }
 
-const USER_AGENT = "mcp-qa/0.1.0";
+const USER_AGENT = "qa-agent-backend/0.1.0";
 
 /**
  * Best-effort webhook delivery. One POST attempt with an AbortController

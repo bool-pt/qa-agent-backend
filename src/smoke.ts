@@ -1,5 +1,5 @@
 /**
- * Smoke test: POSTs a minimal payload to the local mcp-qa REST server,
+ * Smoke test: POSTs a minimal payload to the local qa-agent-backend REST server,
  * waits for the async webhook callback, and verifies the artifact route.
  * Run AFTER `npm start` (or `docker compose up`) is up.
  *

@@ -83,7 +83,7 @@ wait_for_port 18789 60
 #    (default http://127.0.0.1:18789/v1/chat/completions), and the gateway
 #    token from ~/.openclaw/gateway.token via discoverGatewayToken().
 echo "entrypoint: starting REST server"
-node /opt/mcp-qa/dist/index.js &
+node /opt/qa-agent-backend/dist/index.js &
 SERVER_PID=$!
 wait_for_port 3100 30
 

@@ -51,7 +51,7 @@ Docker (canonical):
 docker compose up -d --build       # build + run all three processes
 docker compose logs -f             # follow all logs
 docker compose down                # stop + remove
-docker compose exec mcp-qa bash    # shell into the running container
+docker compose exec qa-agent-backend bash    # shell into the running container
 ```
 
 Source mode (development):
@@ -115,7 +115,7 @@ The server itself has no databases or queues. It assumes:
 5. **In Docker only:** the `outsystemscc` reverse tunnel is required for ODC apps to reach this server. It dials out from the container; the container does not need an inbound public address. `ODC_SERVER_URL`, `ODC_TOKEN`, and `ODC_REMOTE_PORT` come from the ODC Portal's Private Gateway page.
 6. The ODC app exposes a public REST endpoint at `CALLBACK_URL` that accepts `POST` with `Bearer ${BEARER_TOKEN}`. The endpoint must respond 2xx to acknowledge; non-2xx is logged but not retried. It must be reachable from the container (`outsystemscc` is inbound only — outbound webhook traffic uses regular egress).
 
-If `docker compose up` (or `npm start`) succeeds but the webhook arrives with `status: "error"` and message `ECONNREFUSED`, it's the Gateway, not this server. In Docker check `docker compose logs mcp-qa | grep gateway` for early-startup gateway errors. If the webhook never arrives at all, check `docker compose logs mcp-qa | grep '\[webhook\]'` — `delivery FAILED` lines include the full payload for manual recovery.
+If `docker compose up` (or `npm start`) succeeds but the webhook arrives with `status: "error"` and message `ECONNREFUSED`, it's the Gateway, not this server. In Docker check `docker compose logs qa-agent-backend | grep gateway` for early-startup gateway errors. If the webhook never arrives at all, check `docker compose logs qa-agent-backend | grep '\[webhook\]'` — `delivery FAILED` lines include the full payload for manual recovery.
 
 ## Required env vars (Docker)
 
@@ -125,4 +125,4 @@ If `docker compose up` (or `npm start`) succeeds but the webhook arrives with `s
 
 The most recent plan is at `/home/admin/.claude/plans/we-have-a-new-groovy-moth.md` — the MCP-to-REST conversion. Earlier plans (e.g. `the-smoke-test-works-lazy-avalanche.md`) describe the ODC Private Gateway integration and may still be useful for operational context, but are superseded by this plan for the request/response shape.
 
-Project memory at `/home/admin/.claude/projects/-home-admin-Desktop-mcp-qa/memory/` records non-obvious facts gathered across sessions (e.g. OutSystems doc pages need Playwright not WebFetch, ODC Private Gateway URL scheme rules). Read `MEMORY.md` first.
+Project memory at `/home/admin/.claude/projects/-home-admin-Desktop-qa-agent-backend/memory/` records non-obvious facts gathered across sessions (e.g. OutSystems doc pages need Playwright not WebFetch, ODC Private Gateway URL scheme rules). Read `MEMORY.md` first.

@@ -1,4 +1,4 @@
-# mcp-qa REST server
+# qa-agent-backend
 
 The backend for the **OutSystems ONE 2026 hands-on lab** *"The Autonomous QA Agent."*
 A thin TypeScript REST server that exposes your OpenClaw `qa-executor` agent as a single
@@ -100,7 +100,7 @@ When the agent finishes, the server POSTs to `CALLBACK_URL` with:
 POST <CALLBACK_URL> HTTP/1.1
 Authorization: Bearer <BEARER_TOKEN>
 Content-Type: application/json
-User-Agent: mcp-qa/<version>
+User-Agent: qa-agent-backend/<version>
 ```
 
 Successful run — body shape:
@@ -139,7 +139,7 @@ The ODC endpoint should respond with **2xx** to acknowledge receipt. Delivery is
 **best-effort**: one POST attempt with a 30 s timeout (configurable via
 `CALLBACK_TIMEOUT_MS`). On any failure (network error, non-2xx, timeout) the full
 payload is logged at `ERROR` level so you can recover it manually from the server
-logs (`docker compose logs mcp-qa | grep '\[webhook\]'`). There is no retry queue.
+logs (`docker compose logs qa-agent-backend | grep '\[webhook\]'`). There is no retry queue.
 
 ### `GET /artifacts/:jira_key/:run_id/:filename`
 
@@ -171,8 +171,8 @@ This is the lab path. You'll need:
 
 ```bash
 # 1. Clone the repo and copy the env template.
-git clone https://github.com/<owner>/mcp-qa.git
-cd mcp-qa
+git clone https://github.com/<owner>/qa-agent-backend.git
+cd qa-agent-backend
 cp .env.example .env
 
 # 2. Edit .env and fill in six values:
@@ -220,7 +220,7 @@ Docker image just bundles all of it.
 node scripts/patch-openclaw.mjs
 
 # 3. Build and run the REST server:
-cd mcp-qa
+cd qa-agent-backend
 npm install
 npm run build
 cp .env.example .env
@@ -236,7 +236,7 @@ curl -s -H "Authorization: Bearer $(cat ~/.openclaw/gateway.token)" \
 
 # 5. Start the REST server:
 npm start
-# => mcp-qa REST server listening on :3100
+# => qa-agent-backend REST server listening on :3100
 
 # 6. In a second terminal — start the smoke listener (see "Smoke test" below).
 ```
@@ -316,7 +316,7 @@ Optional (defaults are sensible):
 
 ## Verifying end to end
 
-1. Container health: `docker compose ps` shows the `mcp-qa` service `Up`. `docker compose logs` shows all three "[entrypoint] starting …" lines.
+1. Container health: `docker compose ps` shows the `qa-agent-backend` service `Up`. `docker compose logs` shows all three "[entrypoint] starting …" lines.
 2. Local health check: `curl http://localhost:3100/healthz` → `{"ok":true,"agent":"qa-executor"}` (no auth required).
 3. Submit a job:
    ```bash
@@ -349,7 +349,7 @@ Optional (defaults are sensible):
 ### Both Docker and source mode
 
 - **`gateway request failed: ...ECONNREFUSED`**
-  The OpenClaw Gateway isn't running. In Docker, this means the gateway crashed inside the container — `docker compose logs mcp-qa | grep gateway`. In source mode, start it manually.
+  The OpenClaw Gateway isn't running. In Docker, this means the gateway crashed inside the container — `docker compose logs qa-agent-backend | grep gateway`. In source mode, start it manually.
 - **`gateway returned HTTP 401`**
   The Gateway requires auth and the wrapper didn't find a token. Either set
   `GATEWAY_TOKEN` in `.env`, point `GATEWAY_TOKEN_FILE` at the right file, or

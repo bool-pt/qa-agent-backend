@@ -306,7 +306,7 @@ async function main(): Promise<void> {
   pruneOldRuns();
 
   app.listen(PORT, () => {
-    console.log(`mcp-qa REST server listening on :${PORT}`);
+    console.log(`qa-agent-backend REST server listening on :${PORT}`);
     console.log(`  agent:         openclaw/${AGENT_ID}`);
     console.log(`  gateway:       ${GATEWAY_URL}`);
     console.log(`  gateway auth:  ${GATEWAY_TOKEN ? "bearer (discovered)" : "none"}`);

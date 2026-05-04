@@ -90,7 +90,7 @@ COPY workspace-qa /opt/workspace-qa
 COPY openclaw.template.json /opt/openclaw.template.json
 
 # Built REST server (dist/ + production node_modules).
-WORKDIR /opt/mcp-qa
+WORKDIR /opt/qa-agent-backend
 COPY --from=builder /build/dist ./dist
 COPY --from=builder /build/node_modules ./node_modules
 COPY --from=builder /build/package.json ./package.json
