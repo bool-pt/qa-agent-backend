@@ -29,7 +29,7 @@ ODC app ──► ODC Private Gateway ──► outsystemscc (in container)
                                    model: openclaw/qa-executor
                                           │
                                           ▼
-                                 qa-executor (Anthropic API + Playwright)
+                                 qa-executor (Anthropic API + Chromium)
                                           │
                                           ▼
                                  ObservationResult JSON
@@ -222,7 +222,8 @@ run the three processes by hand. This was the original deployment path; the
 Docker image just bundles all of it.
 
 ```bash
-# 1. Install OpenClaw and Playwright Chromium yourself (see the upstream docs).
+# 1. Install OpenClaw, plus a system Chrome/Chromium so OpenClaw's browser
+#    tool can find it (it scans /usr/bin for chromium / google-chrome / etc.).
 # 2. Apply the screenshot patches (one-time):
 node scripts/patch-openclaw.mjs
 
@@ -366,9 +367,8 @@ Optional (defaults are sensible):
 - **`gateway returned HTTP 404` on `/v1/chat/completions`**
   Older OpenClaw builds may host the OpenAI endpoint elsewhere or behind a flag.
   Check `openclaw gateway status` and adjust `GATEWAY_URL`.
-- **Observation reports `Playwright and Chromium were not found`**
-  The Gateway-hosted agent runs in its own workspace (e.g. `~/.openclaw/workspace-qa`).
-  Install Playwright + browsers there: `cd ~/.openclaw/workspace-qa && npx playwright install chromium`.
+- **Agent reports `No supported browser found`**
+  OpenClaw's browser tool scans `/usr/bin/google-chrome`, `/usr/bin/chromium`, etc. for a system browser; it doesn't bundle one. In Docker the image installs `chromium` from apt, so seeing this means the image build is broken — check `docker exec qa-agent-backend ls /usr/bin/chromium`. In source mode, install one yourself (`apt install chromium` on Debian/Ubuntu, `brew install chromium` on macOS).
 - **`401 unauthorized` on submit or artifact fetch**
   The `Authorization` header must be exactly `Bearer <BEARER_TOKEN>`. Compare with `.env`.
 - **`[webhook] delivery FAILED`**
