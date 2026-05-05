@@ -181,8 +181,10 @@ cp .env.example .env
 #    BEARER_TOKEN is your choice; generate one with: openssl rand -hex 32
 
 # 3. Allow the container to draw on your X display, so attendees can watch
-#    the agent drive Chromium live. Linux/VM only — once per session. Skip
-#    this step if you set LIVE_BROWSER=false in .env (headless mode).
+#    the agent drive Chromium live. Linux/VM only. Re-run this after every
+#    logout/reboot — xhost permissions live with the X session and reset
+#    when it ends. Skip this step entirely if you set LIVE_BROWSER=false in
+#    .env (headless mode).
 xhost +local:
 
 # 4. Start the stack. This pulls the pre-built image from GHCR.
@@ -308,7 +310,7 @@ Optional (defaults are sensible):
 
 | Var | Default | Purpose |
 |---|---|---|
-| `LIVE_BROWSER` | `true` | Show the agent's Chromium window on the host display while it runs (lab demo). Needs a Linux host/VM with an X server and `xhost +local:` once. Set to `false` to run headless — useful in CI, on Mac/Windows, or when the host has no display. |
+| `LIVE_BROWSER` | `true` | Show the agent's Chromium window on the host display while it runs (lab demo). Needs a Linux host/VM with an X server and `xhost +local:` (re-run after every logout/reboot — xhost permissions reset with the X session). Set to `false` to run headless — useful in CI, on Mac/Windows, or when the host has no display. |
 | `PORT` | `3100` | Host port the REST server is published on. |
 | `AGENT_ID` | `qa-executor` | OpenClaw agent id; the wrapper sends `model: "openclaw/${AGENT_ID}"`. |
 | `GATEWAY_URL` | `http://127.0.0.1:18789/v1/chat/completions` | OpenClaw Gateway endpoint. Inside the Docker image this is loopback; only override for source-mode setups. |
@@ -349,6 +351,7 @@ Optional (defaults are sensible):
 - **Container restart-loops with `entrypoint: required env var X is not set`** — your `.env` is missing one of the six required values. `docker compose config` to see what compose loaded.
 - **`outsystemscc` log says `connection refused` / `404`** — `ODC_SERVER_URL`, `ODC_TOKEN`, or `ODC_REMOTE_PORT` is wrong. Re-copy them from the ODC Portal.
 - **OOM-killed Chromium** — bump Docker Desktop's RAM allocation to ≥4 GB (Settings → Resources). The compose file already sets the container limit to 4 GB.
+- **Live browser doesn't appear / window opens blank** — almost always missing `xhost +local:` for the current X session. xhost permissions reset at every logout/reboot, so re-run it whenever you hit this. If it still doesn't appear, your host may not have an X server (Mac/Windows without XQuartz/VcXsrv); set `LIVE_BROWSER=false` in `.env` to run headless.
 - **`exec format error` on Apple Silicon** — you pulled the amd64 image. Run `docker compose pull` again to refresh; the workflow publishes both `linux/amd64` and `linux/arm64` under the same tag.
 - **Behind a corporate proxy** — pass `--proxy http://user:pass@host:port` to outsystemscc. Today the entrypoint hardcodes the connector args; if you need this, edit `scripts/entrypoint.sh` or open an issue.
 
