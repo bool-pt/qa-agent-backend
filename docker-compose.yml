@@ -25,6 +25,7 @@ services:
     # container (uid 0) is allowed to connect to the X socket.
     environment:
       - DISPLAY=${DISPLAY:-:0}
+      - TZ=${TZ:-UTC}
     # Share the host IPC namespace so X11 MIT-SHM works. The X server passes
     # pixmaps and screenshot buffers via SysV shared-memory segments; with the
     # container in its own IPC namespace, Chromium can't shmat() them and

@@ -37,7 +37,8 @@ ENV NODE_ENV=production \
 
 # Base utilities: ca-certificates for HTTPS, openssl for token minting,
 # curl/tar for downloading outsystemscc, tini for clean PID-1 signal handling,
-# git because openclaw's transitive deps include git+https URLs.
+# git because openclaw's transitive deps include git+https URLs, tzdata so
+# the TZ env var resolves to a real zoneinfo file (logs match host time).
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         ca-certificates \
@@ -46,6 +47,7 @@ RUN apt-get update && \
         openssl \
         tar \
         tini \
+        tzdata \
     && rm -rf /var/lib/apt/lists/*
 
 # OpenClaw, pinned.
