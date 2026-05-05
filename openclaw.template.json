@@ -138,12 +138,5 @@
         "enabled": true
       }
     }
-  },
-  "skills": {
-    "entries": {
-      "playwright-mcp": {
-        "enabled": false
-      }
-    }
   }
 }
