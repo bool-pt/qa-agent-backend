@@ -28,6 +28,7 @@ interface CallbackPayload {
   status?: unknown;
   run_id?: unknown;
   jira_key?: unknown;
+  client_ref?: unknown;
   results?: unknown;
   screenshots?: unknown;
   error?: unknown;

@@ -66,11 +66,14 @@ Content-Type: application/json
   "jira_key": "AQA-37",
   "title": "View dashboard after login",
   "description": "...\n\nAcceptance Criteria:\n* AC1: ...",
-  "auth": { "required": false }
+  "auth": { "required": false },
+  "client_ref": 12345
 }
 ```
 
 When `auth.required` is `true`, both `username` and `password` must also be present.
+
+`client_ref` is **optional** and **opaque**: a finite JSON number or non-empty string that the server stores nowhere and interprets in no way — it's echoed verbatim (with the same JSON type) on the webhook payload so the consumer can correlate the async result back to its own record (e.g. an ODC `ValidationRun` id). Use a string if your id might exceed `2^53` to avoid JSON number precision loss.
 
 Successful response:
 
@@ -110,6 +113,7 @@ Successful run — body shape:
   "status": "ok",
   "run_id": "2026-05-04T14-22-33-123Z",
   "jira_key": "AQA-37",
+  "client_ref": 12345,    // present iff sent on the request, echoed verbatim
   "results": [
     { "ac": "AC1", "actions_taken": ["..."], "observation": "..." }
   ],
@@ -130,6 +134,7 @@ Failed run — body shape:
   "status": "error",
   "run_id": "2026-05-04T14-22-33-123Z",
   "jira_key": "AQA-37",
+  "client_ref": 12345,    // present iff sent on the request, echoed verbatim
   "error": "agent timed out after 600s",
   "raw": "..."   // optional: raw agent output if the reply was unparseable
 }

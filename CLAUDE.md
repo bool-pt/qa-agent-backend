@@ -94,6 +94,8 @@ There are no unit tests, no linter, and no CI. `src/smoke.ts` is the only check 
 
 The submit body matches what the old MCP `TOOL_INPUT_SCHEMA` accepted. Validation lives in `src/index.ts:validateInput` (hand-rolled, no Ajv dependency). Required: `app_url`, `jira_key`, `title`, `description`, `auth`. When `auth.required === true`, `username` and `password` are also required. The agent reaches the login screen by navigating to `app_url` and following an in-page Login/Sign in link — the base URL of an OutSystems app is often anonymous-accessible and won't auto-redirect, so SOUL.md instructs the agent to find the affordance rather than assume a redirect. There is no `login_url` input.
 
+`client_ref` is an **optional opaque correlation token** (finite JSON number or non-empty string) for the consumer to link the async webhook back to its own record. The server validates the type and otherwise doesn't interpret it, doesn't log it specially, and doesn't pass it to the agent — `prepareRun`/`executeRun`/SOUL.md never see it. It's echoed verbatim with the same JSON type on **both** webhook branches (`ok` and `error`). Don't add format checks.
+
 The webhook payload is a discriminated union on `status`:
 
 - `status: "ok"` — flattened `ObservationResult` plus `jira_key` for correlation:

@@ -4,11 +4,12 @@ import type { ObservationResult } from "./invokeAgent.js";
 // On success the shape is the existing ObservationResult flattened in;
 // on error only `run_id` + `jira_key` + `error` (and optional `raw`) are set.
 export type WebhookPayload =
-  | ({ status: "ok"; jira_key: string } & ObservationResult)
+  | ({ status: "ok"; jira_key: string; client_ref?: number | string } & ObservationResult)
   | {
       status: "error";
       run_id: string;
       jira_key: string;
+      client_ref?: number | string;
       error: string;
       raw?: string;
     };

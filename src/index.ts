@@ -50,7 +50,7 @@ const RUN_ID_RE = /^\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}-\d{3}Z$/;
 const FILENAME_RE = /^[A-Za-z0-9_-]+\.png$/;
 
 const TOP_LEVEL_FIELDS = new Set([
-  "app_url", "jira_key", "title", "description", "auth",
+  "app_url", "jira_key", "title", "description", "auth", "client_ref",
 ]);
 const AUTH_FIELDS = new Set(["required", "username", "password"]);
 
@@ -62,6 +62,7 @@ interface ValidatedInput {
   auth:
     | { required: false }
     | { required: true; username: string; password: string };
+  client_ref?: number | string;
 }
 
 function validateInput(
@@ -105,6 +106,16 @@ function validateInput(
     }
     if (typeof auth.password !== "string" || (auth.password as string).length === 0) {
       return { ok: false, error: `field "auth.password" is required when auth.required is true` };
+    }
+  }
+
+  if (b.client_ref !== undefined) {
+    const c = b.client_ref;
+    const valid =
+      (typeof c === "number" && Number.isFinite(c)) ||
+      (typeof c === "string" && c.length > 0);
+    if (!valid) {
+      return { ok: false, error: `field "client_ref" must be a finite number or a non-empty string` };
     }
   }
 
@@ -204,11 +215,13 @@ const callbackOpts = {
 // settle, we POST the result (or the error) to CALLBACK_URL. Errors from
 // postCallback() are swallowed inside the helper — no need to .catch here.
 function dispatchAgent(input: ValidatedInput, meta: RunMeta): void {
+  const clientRef = input.client_ref !== undefined ? { client_ref: input.client_ref } : {};
   executeRun(input, meta, agentOpts)
     .then(async (result) => {
       const payload: WebhookPayload = {
         status: "ok",
         jira_key: meta.jira_key,
+        ...clientRef,
         run_id: result.run_id,
         results: result.results,
         screenshots: result.screenshots,
@@ -228,6 +241,7 @@ function dispatchAgent(input: ValidatedInput, meta: RunMeta): void {
         status: "error",
         run_id: meta.run_id,
         jira_key: meta.jira_key,
+        ...clientRef,
         error: message,
         ...(raw ? { raw } : {}),
       };
