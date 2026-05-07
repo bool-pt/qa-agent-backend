@@ -185,11 +185,11 @@ cp .env.example .env
 #      ODC_SERVER_URL, ODC_TOKEN, ODC_REMOTE_PORT
 #    BEARER_TOKEN is your choice; generate one with: openssl rand -hex 32
 
-# 3. Allow the container to draw on your X display, so attendees can watch
-#    the agent drive Chromium live. Linux/VM only. Re-run this after every
-#    logout/reboot — xhost permissions live with the X session and reset
-#    when it ends. Skip this step entirely if you set LIVE_BROWSER=false in
-#    .env (headless mode).
+# 3. (Optional, lab demo only) Set LIVE_BROWSER=true in .env, then allow the
+#    container to draw on your X display so attendees can watch the agent
+#    drive Chromium live. Linux/VM only. Re-run this after every logout/
+#    reboot — xhost permissions live with the X session and reset when it
+#    ends. Skip both steps for headless mode (the default).
 xhost +local:
 
 # 4. Start the stack. This pulls the pre-built image from GHCR.
@@ -311,19 +311,19 @@ Required when running with Docker:
 | `ODC_SERVER_URL` | OutSystems Private Gateway address (from ODC Portal). |
 | `ODC_TOKEN` | OutSystems Private Gateway token (from ODC Portal). |
 | `ODC_REMOTE_PORT` | Remote port assigned to your connector (from ODC Portal). |
+| `ALLOWED_HOSTS` | `Host` header values allowed on `GET /artifacts`. Loopback is always allowed, but the Cloud Connector forwards the upstream Host unchanged, so requests from the ODC app arrive as `secure-gateway:<ODC_REMOTE_PORT>` (sometimes bare `secure-gateway`). Without these, screenshot fetches return 403. Set to `secure-gateway:<ODC_REMOTE_PORT>,secure-gateway`. |
 
 Optional (defaults are sensible):
 
 | Var | Default | Purpose |
 |---|---|---|
-| `LIVE_BROWSER` | `true` | Show the agent's Chromium window on the host display while it runs (lab demo). Needs a Linux host/VM with an X server and `xhost +local:` (re-run after every logout/reboot — xhost permissions reset with the X session). Set to `false` to run headless — useful in CI, on Mac/Windows, or when the host has no display. |
+| `LIVE_BROWSER` | `false` | Show the agent's Chromium window on the host display while it runs (lab demo). Default `false` (headless) so the stack starts on any host without X-server setup. Set to `true` ONLY on a Linux host/VM with an X server, and run `xhost +local:` before `docker compose up` (re-run after every logout/reboot — xhost permissions reset with the X session). |
 | `PORT` | `3100` | Host port the REST server is published on. |
 | `AGENT_ID` | `qa-executor` | OpenClaw agent id; the wrapper sends `model: "openclaw/${AGENT_ID}"`. |
 | `GATEWAY_URL` | `http://127.0.0.1:18789/v1/chat/completions` | OpenClaw Gateway endpoint. Inside the Docker image this is loopback; only override for source-mode setups. |
 | `GATEWAY_TOKEN` / `GATEWAY_TOKEN_FILE` | *(auto-discovered)* | Bearer for the Gateway. The container mints a token and writes it to `~/.openclaw/gateway.token`; both processes read from there. |
 | `AGENT_TIMEOUT_SECONDS` | `600` | Max wait for the Gateway to return a reply. |
 | `CALLBACK_TIMEOUT_MS` | `30000` | Max wait for the outbound webhook POST before aborting. |
-| `ALLOWED_HOSTS` | *(empty)* | Extra `Host` header values allowed on `/artifacts`. Loopback is always allowed. Add the upstream `secure-gateway:<port>` value (with and without port) when fetching screenshots through the Private Gateway, since outsystemscc forwards the upstream Host header unchanged. |
 | `ARTIFACT_TTL_DAYS` | `14` | How long per-run screenshot folders are kept before pruning. Set `0` to disable. |
 | `WORKSPACE_ROOT` | `/data/workspace-qa` (container) / `~/.openclaw/workspace-qa` (source) | Filesystem root under which the agent writes screenshots. |
 | `IMAGE_OWNER` / `IMAGE_TAG` | `miguel-morais7` / `latest` | Override only if you've forked the repo and pushed your own image to a different GHCR namespace. |

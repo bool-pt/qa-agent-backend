@@ -36,7 +36,7 @@ token="$(cat "$OPENCLAW_HOME/gateway.token")"
 # Render the openclaw config from the template every start so .env toggles
 # (e.g. LIVE_BROWSER) take effect on `docker compose up -d` without a rebuild.
 # token is hex so it has no sed-special chars.
-case "${LIVE_BROWSER:-true}" in
+case "${LIVE_BROWSER:-false}" in
 	true|TRUE|True|1|yes|YES) browser_headless="false" ;;
 	false|FALSE|False|0|no|NO) browser_headless="true" ;;
 	*)
