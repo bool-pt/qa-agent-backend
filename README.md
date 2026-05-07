@@ -326,7 +326,7 @@ Optional (defaults are sensible):
 | `ALLOWED_HOSTS` | *(empty)* | Extra `Host` header values allowed on `/artifacts`. Loopback is always allowed. Add the upstream `secure-gateway:<port>` value (with and without port) when fetching screenshots through the Private Gateway, since outsystemscc forwards the upstream Host header unchanged. |
 | `ARTIFACT_TTL_DAYS` | `14` | How long per-run screenshot folders are kept before pruning. Set `0` to disable. |
 | `WORKSPACE_ROOT` | `/data/workspace-qa` (container) / `~/.openclaw/workspace-qa` (source) | Filesystem root under which the agent writes screenshots. |
-| `IMAGE_OWNER` / `IMAGE_TAG` | `outsystems-one-2026-lab` / `latest` | Override only if you've forked the repo and pushed your own image to a different GHCR namespace. |
+| `IMAGE_OWNER` / `IMAGE_TAG` | `miguel-morais7` / `latest` | Override only if you've forked the repo and pushed your own image to a different GHCR namespace. |
 
 ## Verifying end to end
 

@@ -11,7 +11,7 @@
 
 services:
   qa-agent-backend:
-    image: ghcr.io/${IMAGE_OWNER:-outsystems-one-2026-lab}/qa-agent-backend:${IMAGE_TAG:-latest}
+    image: ghcr.io/${IMAGE_OWNER:-miguel-morais7}/qa-agent-backend:${IMAGE_TAG:-latest}
     build:
       context: .
       dockerfile: Dockerfile
