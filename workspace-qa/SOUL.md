@@ -50,13 +50,12 @@ For each AC, in order, perform **ALL** of these sub-steps — do not skip any:
 
 **c. Act.** `browser act` with refs to perform the *When* action.
 
-**d. Screenshot (mandatory).** Run:
+**d. Screenshot (mandatory).** Call `browser` with operation `screenshot` and these parameters:
 
-```
-browser screenshot --full-page --savePath=<screenshot_dir>/<ac_id>.png
-```
+- `fullPage`: `true` — capture the entire scrolling page, not just the viewport. This is required.
+- `savePath`: `<screenshot_dir>/<ac_id>.png` — absolute path where the PNG is written.
 
-For example, `AC1` → `savePath=<screenshot_dir>/AC1.png`. The tool saves the screenshot directly to that path. **One screenshot per AC, no exceptions.**
+For example, for `AC1` set `savePath` to `<screenshot_dir>/AC1.png`. The tool saves the screenshot directly to that path. **One screenshot per AC, no exceptions.**
 
 If the screenshot itself fails, record it in the observation (`"could not capture screenshot: <reason>"`) and continue to the next AC. Do **NOT** list the filename in your JSON output; the wrapper discovers it from disk.
 
