@@ -19,7 +19,7 @@ if (!BEARER_TOKEN) {
   process.exit(1);
 }
 
-const appUrl = process.argv[2] ?? "https://personal-7ihmyyg1-dev.outsystems.app/OSMDb/";
+const appUrl = process.argv[2] ?? "https://personal-XXXXXXX-dev.outsystems.app/MyApp/";
 
 const RUN_ID_RE = /^\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}-\d{3}Z$/;
 const PATH_RE = /^[A-Z][A-Z0-9]*-\d+\/\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}-\d{3}Z\/[A-Za-z0-9_-]+\.png$/;
