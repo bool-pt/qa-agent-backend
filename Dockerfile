@@ -96,8 +96,10 @@ COPY --from=builder /build/node_modules ./node_modules
 COPY --from=builder /build/package.json ./package.json
 
 # Entrypoint last so iteration on it doesn't bust earlier layers.
+# Strip CR before chmod in case the build context came from a Windows checkout
+# with CRLF endings — otherwise the shebang becomes `bash\r` and exec fails.
 COPY scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN sed -i 's/\r$//' /usr/local/bin/entrypoint.sh && chmod +x /usr/local/bin/entrypoint.sh
 
 EXPOSE 3100
 VOLUME ["/data/workspace-qa"]

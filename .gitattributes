@@ -1,0 +1,5 @@
+# Shell scripts must keep LF endings — they run inside the Linux container.
+# Without this, a Windows clone with core.autocrlf=true converts entrypoint.sh
+# to CRLF and the `#!/usr/bin/env bash` shebang fails with exit 127.
+*.sh text eol=lf
+scripts/entrypoint.sh text eol=lf
