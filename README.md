@@ -326,7 +326,7 @@ Optional (defaults are sensible):
 | `CALLBACK_TIMEOUT_MS` | `30000` | Max wait for the outbound webhook POST before aborting. |
 | `ARTIFACT_TTL_DAYS` | `14` | How long per-run screenshot folders are kept before pruning. Set `0` to disable. |
 | `WORKSPACE_ROOT` | `/data/workspace-qa` (container) / `~/.openclaw/workspace-qa` (source) | Filesystem root under which the agent writes screenshots. |
-| `IMAGE_OWNER` / `IMAGE_TAG` | `miguel-morais7` / `latest` | Override only if you've forked the repo and pushed your own image to a different GHCR namespace. |
+| `IMAGE_OWNER` / `IMAGE_TAG` | `bool-pt` / `latest` | Override only if you've forked the repo and pushed your own image to a different GHCR namespace. |
 
 ## Verifying end to end
 
