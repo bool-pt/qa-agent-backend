@@ -128,7 +128,8 @@
     "defaultProfile": "openclaw",
     "profiles": {
       "openclaw": {
-        "userDataDir": "/tmp/openclaw-browser/openclaw"
+        "userDataDir": "/tmp/openclaw-browser/openclaw",
+        "color": "#FF4500"
       }
     }
   },
