@@ -8,13 +8,15 @@ import { promisify } from "node:util";
 
 const execFileAsync = promisify(execFile);
 
-// Managed `openclaw` browser profile's user-data-dir, pinned in
-// openclaw.template.json. The gateway gives a fresh agent conversation per
-// call (`user: randomUUID()`) but the underlying Chromium profile persists on
-// disk, so cookies/login leak across runs. We stop+wipe before each run.
-const BROWSER_USERDATA_DIR =
-  process.env.BROWSER_USERDATA_DIR?.trim() || "/tmp/openclaw-browser/openclaw";
+// Managed `openclaw` browser profile's user-data-dir. The gateway gives a
+// fresh agent conversation per call (`user: randomUUID()`) but the underlying
+// Chromium profile persists on disk, so cookies/login leak across runs. We
+// stop+wipe before each run. Default path is openclaw's convention for
+// managed profiles: $HOME/.openclaw/browser/<profile>/user-data.
 const BROWSER_PROFILE_NAME = "openclaw";
+const BROWSER_USERDATA_DIR =
+  process.env.BROWSER_USERDATA_DIR?.trim() ||
+  join(homedir(), ".openclaw", "browser", BROWSER_PROFILE_NAME, "user-data");
 const BROWSER_RESET_TIMEOUT_MS = 5_000;
 
 export interface ObservationResult {
