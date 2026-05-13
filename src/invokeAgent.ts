@@ -1,8 +1,21 @@
 import { readFileSync } from "node:fs";
-import { readdir, stat } from "node:fs/promises";
+import { readdir, rm, stat } from "node:fs/promises";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
+
+const execFileAsync = promisify(execFile);
+
+// Managed `openclaw` browser profile's user-data-dir, pinned in
+// openclaw.template.json. The gateway gives a fresh agent conversation per
+// call (`user: randomUUID()`) but the underlying Chromium profile persists on
+// disk, so cookies/login leak across runs. We stop+wipe before each run.
+const BROWSER_USERDATA_DIR =
+  process.env.BROWSER_USERDATA_DIR?.trim() || "/tmp/openclaw-browser/openclaw";
+const BROWSER_PROFILE_NAME = "openclaw";
+const BROWSER_RESET_TIMEOUT_MS = 5_000;
 
 export interface ObservationResult {
   results: Array<{
@@ -125,6 +138,8 @@ async function doExecute(
   const inputObj = (input ?? {}) as Record<string, unknown>;
   const { run_id: runId, jira_key: jiraKey, screenshot_dir: screenshotDir } = meta;
 
+  await resetBrowserProfile(runId);
+
   // Hand the agent both the run_id and the absolute directory it must write
   // into, so SOUL.md doesn't have to encode the workspace root.
   const messageBody = { ...inputObj, run_id: runId, screenshot_dir: screenshotDir };
@@ -235,6 +250,36 @@ async function listScreenshots(dir: string): Promise<string[]> {
   const pngs = stats.filter((x): x is { name: string; mtimeMs: number } => x !== null);
   pngs.sort((a, b) => a.mtimeMs - b.mtimeMs);
   return pngs.map((p) => p.name);
+}
+
+// Stop the managed Chromium process and delete its user-data-dir so the next
+// agent call starts with no cookies / storage / login. Best-effort: failures
+// are logged but do not abort the run — the agent still works, just without
+// the isolation guarantee, and the operator sees the warning in logs.
+async function resetBrowserProfile(runId: string): Promise<void> {
+  try {
+    await execFileAsync(
+      "openclaw",
+      ["browser", "--browser-profile", BROWSER_PROFILE_NAME, "stop"],
+      { timeout: BROWSER_RESET_TIMEOUT_MS },
+    );
+  } catch (err) {
+    // Non-zero exit usually means "wasn't running" — expected on the first
+    // call and after clean shutdowns. Only log if the failure looks atypical.
+    const e = err as { code?: string | number; killed?: boolean };
+    if (e.killed) {
+      console.error(`[browser-reset] run_id=${runId} 'openclaw browser stop' timed out after ${BROWSER_RESET_TIMEOUT_MS}ms`);
+    }
+  }
+
+  try {
+    await rm(BROWSER_USERDATA_DIR, { recursive: true, force: true });
+    console.log(`[browser-reset] run_id=${runId} wiped ${BROWSER_USERDATA_DIR}`);
+  } catch (err) {
+    console.error(
+      `[browser-reset] run_id=${runId} failed to wipe ${BROWSER_USERDATA_DIR}: ${(err as Error).message} — proceeding with dirty state`,
+    );
+  }
 }
 
 /**

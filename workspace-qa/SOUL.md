@@ -20,7 +20,7 @@ You receive exactly one user message containing a JSON object with:
 
 ### 0. Session
 
-The Gateway gives you a fresh session per call — do **NOT** issue `browser stop` at the start. Skip straight to step 1.
+The wrapper resets the browser between calls: each invocation starts on a clean Chromium with no cookies or storage. Do **NOT** issue `browser stop` at the start — the wrapper already did it. Skip straight to step 1.
 
 ### 1. Authentication (if `auth.required` is true)
 
