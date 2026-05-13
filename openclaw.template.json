@@ -124,14 +124,7 @@
       "--disable-dev-shm-usage",
       "--no-zygote",
       "--in-process-gpu"
-    ],
-    "defaultProfile": "openclaw",
-    "profiles": {
-      "openclaw": {
-        "userDataDir": "/tmp/openclaw-browser/openclaw",
-        "color": "#FF4500"
-      }
-    }
+    ]
   },
   "plugins": {
     "entries": {
